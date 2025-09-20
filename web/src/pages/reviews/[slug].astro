@@ -1,0 +1,69 @@
+---
+import Base from '../../layouts/Base.astro'
+import groq from 'groq'
+import { sanity } from '../../lib/sanity'
+import { toHTML } from '@portabletext/to-html'
+import { urlFor } from '../../lib/image'
+
+export async function getStaticPaths() {
+  const slugs = await sanity.fetch(
+    groq`*[_type=="exchange" && defined(slug.current)][].slug.current`
+  )
+  return slugs.map((slug: string) => ({ params: { slug } }))
+}
+
+const { slug } = Astro.params
+const x = await sanity.fetch(
+  groq`*[_type=="exchange" && slug.current==$slug][0]{
+    name, logo, websiteUrl, shortDescription, body,
+    proofOfReserves, tradingFees, scores, publishedAt
+  }`,
+  { slug }
+)
+
+const bodyHtml = x?.body ? toHTML(x.body) : ''
+
+const site = (Astro.site && Astro.site.toString()) || 'https://trusted-crypto-site.vercel.app'
+const canonical = `${site.replace(/\/$/, '')}/reviews/${slug}/`
+const imageUrl = x?.logo ? urlFor(x.logo).width(600).height(600).auto('format').url() : undefined
+
+const reviewJsonLd: Record<string, any> = {
+  "@context": "https://schema.org",
+  "@type": "Review",
+  itemReviewed: { "@type": "Organization", name: x?.name, url: x?.websiteUrl || canonical },
+  author: { "@type": "Organization", name: "Trusted Crypto" },
+  reviewRating: x?.scores?.overall != null ? {
+    "@type": "Rating", ratingValue: x.scores.overall, bestRating: 100, worstRating: 0
+  } : undefined
+}
+---
+
+<Base title={`${x?.name} Review`} description={x?.shortDescription} image={imageUrl} url={canonical}>
+  <script type="application/ld+json" set:html={JSON.stringify(reviewJsonLd)}></script>
+
+  <a href="/reviews/" class="underline">← All Reviews</a>
+  <div class="flex items-center gap-3 mt-2">
+    {x?.logo && <img src={urlFor(x.logo).width(80).height(80).auto('format').url()} alt={x.name} width="80" height="80" class="rounded-lg" />}
+    <h1 class="text-3xl font-semibold">{x?.name} — Review</h1>
+  </div>
+  <p class="opacity-70 text-sm mt-1">{new Date(x?.publishedAt || Date.now()).toLocaleDateString()}</p>
+
+  <div class="grid md:grid-cols-3 gap-4 my-4">
+    <div class="bg-[#12161b] rounded-2xl p-4 border border-white/5">
+      <div class="font-semibold">Overall</div>
+      <div class="text-2xl">{x?.scores?.overall ?? '—'}</div>
+    </div>
+    <div class="bg-[#12161b] rounded-2xl p-4 border border-white/5">
+      <div class="font-semibold">Fees</div>
+      <div>{x?.scores?.fees ?? '—'}</div>
+      <div class="opacity-70 text-sm">Maker: {x?.tradingFees?.maker ?? '—'}% • Taker: {x?.tradingFees?.taker ?? '—'}%</div>
+    </div>
+    <div class="bg-[#12161b] rounded-2xl p-4 border border-white/5">
+      <div class="font-semibold">Security</div>
+      <div>{x?.scores?.security ?? '—'}</div>
+      <div class="opacity-70 text-sm">{x?.proofOfReserves ? 'Proof of Reserves ✓' : 'No Proof of Reserves'}</div>
+    </div>
+  </div>
+
+  {bodyHtml && <div class="prose prose-invert max-w-none" set:html={bodyHtml}></div>}
+</Base>

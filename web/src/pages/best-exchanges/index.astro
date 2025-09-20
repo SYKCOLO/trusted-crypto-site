@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro'
+import groq from 'groq'
+import { sanity } from '../../lib/sanity'
+import { urlFor } from '../../lib/image'
+
+const exchanges = await sanity.fetch(groq`
+  *[_type=="exchange"] | order(scores.overall desc){
+    name, "slug": slug.current, logo, shortDescription,
+    "overall": scores.overall, "maker": tradingFees.maker, "taker": tradingFees.taker,
+    proofOfReserves
+  }
+`)
+---
+
+<Base title="Best Crypto Exchanges" description="Our data-backed, independent rankings of crypto exchanges.">
+  <h1 class="text-3xl font-semibold mb-4">Best Crypto Exchanges</h1>
+  <div class="grid md:grid-cols-2 gap-4">
+    {exchanges.map((x: any) => (
+      <a href={`/reviews/${x.slug}/`} class="bg-[#12161b] rounded-2xl p-5 border border-white/5 block">
+        <div class="flex items-center gap-3">
+          {x.logo && <img src={urlFor(x.logo).width(64).height(64).url()} alt={x.name} width="64" height="64" class="rounded-lg" />}
+          <div>
+            <div class="font-semibold">{x.name}</div>
+            <div class="text-sm opacity-70">Overall: {x.overall ?? '—'} • Maker: {x.maker ?? '—'}% • Taker: {x.taker ?? '—'}% {x.proofOfReserves ? '• PoR' : ''}</div>
+          </div>
+        </div>
+        <p class="opacity-80 mt-3">{x.shortDescription}</p>
+      </a>
+    ))}
+  </div>
+</Base>

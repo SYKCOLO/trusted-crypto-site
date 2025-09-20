@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro'
+import groq from 'groq'
+import { sanity } from '../../lib/sanity'
+
+const exchanges = await sanity.fetch(groq`
+  *[_type=="exchange"] | order(name asc){
+    name, "slug": slug.current, "overall": scores.overall
+  }
+`)
+---
+
+<Base title="Exchange Reviews" description="Independent reviews with transparent scoring.">
+  <h1 class="text-2xl font-semibold mb-4">Exchange Reviews</h1>
+  <ul class="space-y-2">
+    {exchanges.map((x: any) => (
+      <li><a class="underline" href={`/reviews/${x.slug}/`}>{x.name}</a> <span class="opacity-70">— Overall: {x.overall ?? '—'}</span></li>
+    ))}
+  </ul>
+</Base>
