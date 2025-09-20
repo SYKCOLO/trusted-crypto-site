@@ -4,8 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import sitemap from '@astrojs/sitemap'
 
 export default defineConfig({
-  // TEMP: we'll set this to your real domain after deploy
-  site: 'https://trusted-crypto-site.vercel.app',
+  site: 'https://trusted-crypto-site.vercel.app', // set to your Vercel URL
   vite: { plugins: [tailwindcss()] },
   integrations: [sitemap()],
 })
