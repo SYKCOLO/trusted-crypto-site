@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# node
+node_modules
+dist
+.vercel
+
+# envs
+web/.env
+studio/.env

@@ -1,0 +1,114 @@
+---
+const siteName = "Trusted Crypto";
+const title = "Trusted Crypto — Honest reviews, clear guides, and data-backed rankings";
+const desc =
+  "Trusted Crypto helps you choose with confidence. Independent reviews, transparent ratings, and simple guides across exchanges, wallets, and crypto essentials.";
+const url = "http://localhost:4321/";
+const heroSrc = "/hero.jpg"; // change to 'https://picsum.photos/1600/900' if you don't have a local image yet
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="description" content={desc} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={heroSrc} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <style>
+      :root{
+        --bg:#0b0d10; --card:#12161b; --ink:#e6eef6; --muted:#a9b4c0;
+        --accent:#7bd389; --accent-ink:#062612; --maxw:1100px; --r:14px;
+      }
+      html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+        font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+        line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+      .wrap{max-width:var(--maxw);margin:0 auto;padding:20px}
+      header{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+      nav a{color:var(--ink);opacity:.9;margin-left:16px;text-decoration:none}
+      nav a:hover{text-decoration:underline}
+      .hero{display:grid;gap:22px;align-items:center;grid-template-columns:1.1fr .9fr;padding:28px 0 10px}
+      .hero img{width:100%;height:auto;border-radius:var(--r);display:block;background:#0e1116}
+      h1{font-size:clamp(28px,3.8vw,44px);line-height:1.2;margin:0 0 10px}
+      .lead{color:var(--muted);margin:0 0 18px}
+      .cta{display:inline-block;background:var(--accent);color:var(--accent-ink);padding:12px 16px;border-radius:12px;font-weight:600;text-decoration:none}
+      .usps,.grid3{display:grid;gap:14px;grid-template-columns:repeat(3,1fr)}
+      .card{background:var(--card);border-radius:var(--r);padding:18px;border:1px solid rgba(255,255,255,.05)}
+      .card h3{margin:0 0 6px;font-size:18px}
+      .card p{margin:0;color:var(--muted)}
+      section{margin:40px 0}
+      .small{font-size:14px;color:var(--muted)}
+      footer{margin:36px 0 20px;color:var(--muted);font-size:14px}
+      @media(max-width:900px){.hero{grid-template-columns:1fr}.usps,.grid3{grid-template-columns:1fr}}
+    </style>
+  </head>
+  <body>
+    <header class="wrap">
+      <div style="font-weight:700">Trusted Crypto</div>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/news/">Articles</a>
+        <a href="/best-exchanges/">Best Exchanges</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/about/">About</a>
+      </nav>
+    </header>
+
+    <main class="wrap">
+      <div class="hero">
+        <div>
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight tracking-tight">
+  Make smarter crypto decisions with independent reviews & simple guides
+</h1>
+          <p class="lead">We cut through hype and jargon so you don’t get burned. Compare exchanges, understand fees and security, and learn with plain-English explainers.</p>
+          <a class="cta" href="/best-exchanges/">See the best crypto exchanges →</a>
+          <p class="small" style="margin-top:8px">Updated regularly. No pay-to-play rankings.</p>
+        </div>
+        <div>
+          <img src={heroSrc} alt="Trusted Crypto — independent reviews and guides" width="1600" height="900" loading="eager" fetchpriority="high" />
+        </div>
+      </div>
+
+      <section>
+        <div class="usps">
+          <div class="card"><h3>Independent & transparent</h3><p>Clear criteria, sources cited, and a documented review process.</p></div>
+          <div class="card"><h3>Data-backed rankings</h3><p>We analyze fees, liquidity, trust signals, and user feedback.</p></div>
+          <div class="card"><h3>Beginner-friendly guides</h3><p>Step-by-step explainers without the fluff or hype.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2 style="margin:0 0 12px 0">How Trusted Crypto helps you</h2>
+        <div class="grid3">
+          <div class="card"><h3>Compare</h3><p>Find the right exchange for your needs—spot, futures, low fees, or easy KYC.</p></div>
+          <div class="card"><h3>Verify</h3><p>Understand proof-of-reserves, security practices, and jurisdictional risks.</p></div>
+          <div class="card"><h3>Learn</h3><p>Short guides on wallets, taxes, and safer habits—written for humans.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2 style="margin:0 0 12px 0">Explore</h2>
+        <div class="grid3">
+          <a class="card" href="/best-exchanges/"><h3>Best Crypto Exchanges</h3><p>Our top picks by fees, security, and user experience.</p></a>
+          <a class="card" href="/reviews/"><h3>Exchange Reviews</h3><p>In-depth, structured reviews with pros/cons and scoring.</p></a>
+          <a class="card" href="/news/"><h3>Articles & Guides</h3><p>Plain-English explainers, walkthroughs, and tips.</p></a>
+        </div>
+      </section>
+
+      <section>
+        <div class="card">
+          <h3 style="margin:0 0 6px 0">Why our advice is different</h3>
+          <p class="small">We’re independent. We don’t sell coins or run an exchange. We disclose partnerships, cite sources, and update recommendations as facts change.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wrap">© {new Date().getFullYear()} {siteName}. All rights reserved.</footer>
+  </body>
+</html>

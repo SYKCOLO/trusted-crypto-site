@@ -1,0 +1,54 @@
+---
+import '../../styles/global.css';
+import groq from 'groq'
+import { sanity } from '../../lib/sanity'
+import { toHTML } from '@portabletext/to-html'
+import { urlFor } from '../../lib/image'
+
+export async function getStaticPaths() {
+  const slugs = await sanity.fetch(
+    groq`*[_type=="post" && defined(slug.current)][].slug.current`
+  )
+  return slugs.map((slug: string) => ({ params: { slug } }))
+}
+
+const { slug } = Astro.params
+const post = await sanity.fetch(
+  groq`*[_type=="post" && slug.current==$slug][0]{
+    title,
+    publishedAt,
+    body,
+    mainImage
+  }`,
+  { slug }
+)
+
+// Render Portable Text to static HTML
+const bodyHtml = post?.body ? toHTML(post.body) : ''
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{post?.title}</title>
+    <meta name="description" content={post?.title || ''} />
+  </head>
+  <body style="font-family:system-ui;max-width:900px;margin:0 auto;padding:20px;">
+    <a href="/news/">← All News</a>
+    <h1>{post?.title}</h1>
+    <p><small>{new Date(post?.publishedAt).toLocaleString()}</small></p>
+
+    {post?.mainImage && (
+      <img
+        src={urlFor(post.mainImage).width(1200).height(630).auto('format').url()}
+        alt={post?.title}
+        loading="eager"
+        fetchpriority="high"
+        width="1200"
+        height="630"
+      />
+    )}
+
+    <div set:html={bodyHtml}></div>
+  </body>
+</html>
