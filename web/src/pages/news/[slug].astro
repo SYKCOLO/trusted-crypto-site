@@ -1,54 +1,64 @@
 ---
-import '../../styles/global.css';
-import groq from 'groq'
-import { sanity } from '../../lib/sanity'
-import { toHTML } from '@portabletext/to-html'
-import { urlFor } from '../../lib/image'
+import Base from '../../layouts/Base.astro';
+import groq from 'groq';
+import { sanity } from '../../lib/sanity';
+import { toHTML } from '@portabletext/to-html';
+import { urlFor } from '../../lib/image';
 
 export async function getStaticPaths() {
   const slugs = await sanity.fetch(
     groq`*[_type=="post" && defined(slug.current)][].slug.current`
-  )
-  return slugs.map((slug: string) => ({ params: { slug } }))
+  );
+  return slugs.map((slug: string) => ({ params: { slug } }));
 }
 
-const { slug } = Astro.params
+const { slug } = Astro.params;
 const post = await sanity.fetch(
   groq`*[_type=="post" && slug.current==$slug][0]{
-    title,
-    publishedAt,
-    body,
-    mainImage
+    title, publishedAt, body, mainImage,
+    "authorName": author->name
   }`,
   { slug }
-)
+);
 
-// Render Portable Text to static HTML
-const bodyHtml = post?.body ? toHTML(post.body) : ''
+const bodyHtml = post?.body ? toHTML(post.body) : '';
+
+const site = (Astro.site && Astro.site.toString()) || 'https://trusted-crypto-site.vercel.app';
+const canonical = `${site.replace(/\/$/, '')}/news/${slug}/`;
+const imageUrl = post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).auto('format').url() : undefined;
+
+// Article JSON-LD
+const articleJsonLd: Record<string, any> = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: post?.title,
+  datePublished: post?.publishedAt,
+  dateModified: post?.publishedAt,
+  mainEntityOfPage: canonical,
+  author: post?.authorName ? { "@type": "Person", name: post.authorName } : { "@type": "Organization", name: "Trusted Crypto" },
+  publisher: { "@type": "Organization", name: "Trusted Crypto" },
+};
+if (imageUrl) articleJsonLd.image = [imageUrl];
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>{post?.title}</title>
-    <meta name="description" content={post?.title || ''} />
-  </head>
-  <body style="font-family:system-ui;max-width:900px;margin:0 auto;padding:20px;">
-    <a href="/news/">← All News</a>
-    <h1>{post?.title}</h1>
-    <p><small>{new Date(post?.publishedAt).toLocaleString()}</small></p>
+<Base title={post?.title} description={post?.title} image={imageUrl} url={canonical}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)}></script>
 
-    {post?.mainImage && (
-      <img
-        src={urlFor(post.mainImage).width(1200).height(630).auto('format').url()}
-        alt={post?.title}
-        loading="eager"
-        fetchpriority="high"
-        width="1200"
-        height="630"
-      />
-    )}
+  <a href="/news/" class="underline">← All News</a>
+  <h1 class="text-3xl font-semibold mt-2">{post?.title}</h1>
+  <p class="opacity-70 text-sm">{new Date(post?.publishedAt).toLocaleString()}</p>
 
-    <div set:html={bodyHtml}></div>
-  </body>
-</html>
+  {post?.mainImage && (
+    <img
+      src={urlFor(post.mainImage).width(1200).height(630).auto('format').url()}
+      alt={post?.title}
+      loading="eager"
+      fetchpriority="high"
+      width="1200"
+      height="630"
+      class="rounded-2xl my-4"
+    />
+  )}
+
+  <div class="prose prose-invert max-w-none" set:html={bodyHtml}></div>
+</Base>

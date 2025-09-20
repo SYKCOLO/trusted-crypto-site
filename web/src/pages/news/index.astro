@@ -1,29 +1,23 @@
 ---
-import '../../styles/global.css';
-import groq from 'groq'
-import { sanity } from '../../lib/sanity'
+import Base from '../../layouts/Base.astro';
+import groq from 'groq';
+import { sanity } from '../../lib/sanity';
 
 const posts = await sanity.fetch(groq`
   *[_type == "post"] | order(publishedAt desc){
-    title, "slug": slug.current, coverImage, publishedAt
+    title, "slug": slug.current, publishedAt
   }[0...50]
-`)
+`);
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>News</title>
-  </head>
-  <body style="font-family:system-ui;max-width:900px;margin:0 auto;padding:20px;">
-    <h1>Latest News</h1>
-    <ul>
-      {posts.map((p: any) => (
-        <li style="margin:8px 0;">
-          <a href={`/news/${p.slug}/`}>{p.title}</a>
-          {' '}— {new Date(p.publishedAt).toLocaleDateString()}
-        </li>
-      ))}
-    </ul>
-  </body>
-</html>
+<Base title="Latest News" description="Articles & guides from Trusted Crypto">
+  <h1 class="text-2xl font-semibold mb-4">Latest News</h1>
+  <ul class="space-y-2">
+    {posts.map((p: any) => (
+      <li>
+        <a class="underline" href={`/news/${p.slug}/`}>{p.title}</a>
+        <span class="opacity-70"> — {new Date(p.publishedAt).toLocaleDateString()}</span>
+      </li>
+    ))}
+  </ul>
+</Base>
