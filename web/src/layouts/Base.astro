@@ -2,13 +2,9 @@
 import SpeedInsights from '@vercel/speed-insights/astro'
 import '../styles/global.css'
 import Nav from '../components/Nav.astro'
+import GlobalGlow from '../components/GlobalGlow.astro'
 
-const {
-  title = 'Trusted Crypto',
-  description = '',
-  image,
-  url
-} = Astro.props
+const { title = 'Trusted Crypto', description = '', image, url } = Astro.props
 ---
 <html lang="en">
   <head>
@@ -21,7 +17,6 @@ const {
     <!-- Perf: Sanity CDN preconnect -->
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
 
-    <!-- Basic social -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {image && <meta property="og:image" content={image} />}
@@ -29,8 +24,9 @@ const {
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body class="bg-[#0b0f14] text-white antialiased">
+    <GlobalGlow />
     <Nav />
-    <main id="content" class="max-w-5xl mx-auto p-6">
+    <main id="content" class="max-w-[1160px] mx-auto p-6">
       <slot />
     </main>
     <SpeedInsights />
