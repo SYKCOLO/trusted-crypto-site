@@ -1,0 +1,53 @@
+---
+import { urlFor } from '../lib/image'
+
+interface Props {
+  asset: any
+  alt?: string
+  widths?: number[]
+  sizes?: string
+  loading?: 'lazy' | 'eager'
+  fetchpriority?: 'auto' | 'low' | 'high'
+  decoding?: 'async' | 'auto'
+  class?: string
+  aspect?: number     // e.g. 1 for square, 16/9 ≈ 1.777 for 16:9
+  quality?: number    // default 70
+}
+
+const {
+  asset,
+  alt = '',
+  widths = [200, 320, 480, 640, 800, 1200],
+  sizes = '(max-width: 768px) 100vw, 640px',
+  loading = 'lazy',
+  fetchpriority = 'auto',
+  decoding = 'async',
+  class: className = '',
+  aspect,
+  quality = 70,
+} = Astro.props as Props
+
+const make = (w:number, fmt?:string) =>
+  urlFor(asset).width(w).fit('max').auto('format').quality(quality).format(fmt || undefined).url()
+
+const srcsetWebp = widths.map(w => `${make(w,'webp')} ${w}w`).join(', ')
+const srcset     = widths.map(w => `${make(w)} ${w}w`).join(', ')
+const maxW = Math.max(...widths)
+const src  = make(maxW)
+---
+
+<picture>
+  <source type="image/webp" srcset={srcsetWebp} sizes={sizes} />
+  <img
+    src={src}
+    srcset={srcset}
+    sizes={sizes}
+    alt={alt}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    decoding={decoding}
+    width={maxW}
+    class={className}
+    style={`height:auto;${aspect ? `aspect-ratio:${aspect};` : ''}`}
+  />
+</picture>
