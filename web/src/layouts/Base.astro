@@ -1,6 +1,7 @@
 ---
 import SpeedInsights from '@vercel/speed-insights/astro'
-import '../styles/global.css'   // 👈 bring Tailwind back in
+import '../styles/global.css'
+import Nav from '../components/Nav.astro'
 
 const {
   title = 'Trusted Crypto',
@@ -15,7 +16,6 @@ const {
     <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
     <meta name="description" content={description} />
-
     {url && <link rel="canonical" href={url} />}
 
     <!-- Perf: Sanity CDN preconnect -->
@@ -29,11 +29,10 @@ const {
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body class="bg-[#0b0f14] text-white antialiased">
-    <main class="max-w-5xl mx-auto p-6">
+    <Nav />
+    <main id="content" class="max-w-5xl mx-auto p-6">
       <slot />
     </main>
-
-    <!-- Vercel Speed Insights (RUM) -->
     <SpeedInsights />
   </body>
 </html>
