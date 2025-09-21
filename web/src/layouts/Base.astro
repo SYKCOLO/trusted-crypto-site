@@ -1,58 +1,38 @@
 ---
-import '../styles/global.css';
-
-export interface Props {
-  title?: string;
-  description?: string;
-  image?: string;
-  url?: string;
-}
+import SpeedInsights from '@vercel/speed-insights/astro'
+import '../styles/global.css'
+import Nav from '../components/Nav.astro'
 
 const {
   title = 'Trusted Crypto',
-  description = 'Independent reviews, clear guides, and data-backed rankings.',
-  image = '/hero.jpg',
-  url = Astro.site ? Astro.site.toString() : 'https://trusted-crypto-site.vercel.app'
-} = Astro.props as Props;
+  description = '',
+  image,
+  url
+} = Astro.props
 ---
-
-<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {url && <link rel="canonical" href={url} />}
 
-    <!-- Social -->
+    <!-- Perf: Sanity CDN preconnect -->
+    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+
+    <!-- Basic social -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={url} />
-    <meta property="og:image" content={image} />
+    {image && <meta property="og:image" content={image} />}
+    {url && <meta property="og:url" content={url} />}
     <meta name="twitter:card" content="summary_large_image" />
-
-    <!-- Perf -->
-    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
   </head>
-  <body class="bg-[#0b0d10] text-[#e6eef6]">
-    <header class="max-w-[1100px] mx-auto p-5 flex items-center justify-between">
-      <a href="/" class="font-bold">Trusted Crypto</a>
-      <nav class="space-x-4 text-sm">
-        <a href="/">Home</a>
-        <a href="/news/">Articles</a>
-        <a href="/best-exchanges/">Best Exchanges</a>
-        <a href="/reviews/">Reviews</a>
-        <a href="/about/">About</a>
-      </nav>
-    </header>
-
-    <main class="max-w-[1100px] mx-auto p-5">
+  <body class="bg-[#0b0f14] text-white antialiased">
+    <Nav />
+    <main id="content" class="max-w-5xl mx-auto p-6">
       <slot />
     </main>
-
-    <footer class="max-w-[1100px] mx-auto p-5 text-sm opacity-70">
-      © {new Date().getFullYear()} Trusted Crypto.
-    </footer>
+    <SpeedInsights />
   </body>
 </html>
