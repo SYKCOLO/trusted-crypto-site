@@ -15,7 +15,10 @@ export async function getStaticPaths() {
 const { slug } = Astro.params
 const post = await sanity.fetch(
   groq`*[_type=="post" && slug.current==$slug][0]{
-    title, coverImage, publishedAt, body
+    title,
+    "coverImage": mainImage,  // alias for Sanity blog schema
+    publishedAt,
+    body
   }`,
   { slug }
 )
@@ -36,7 +39,7 @@ const bodyHtml = post?.body ? toHTML(post.body) : ''
       loading="eager"
       fetchpriority="high"
       aspect={1200/630}
-      class="rounded-2xl my-4"
+      class="rounded-2xl my-4 w-full"
     />
   )}
 

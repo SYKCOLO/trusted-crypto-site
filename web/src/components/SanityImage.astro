@@ -48,6 +48,6 @@ const src  = make(maxW)
     decoding={decoding}
     width={maxW}
     class={className}
-    style={`height:auto;${aspect ? `aspect-ratio:${aspect};` : ''}`}
+    style={aspect ? `aspect-ratio:${aspect}` : undefined}
   />
 </picture>
