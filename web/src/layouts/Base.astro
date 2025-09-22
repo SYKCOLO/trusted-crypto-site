@@ -4,31 +4,40 @@ import '../styles/global.css'
 import Nav from '../components/Nav.astro'
 import GlobalGlow from '../components/GlobalGlow.astro'
 
-const { title = 'Trusted Crypto', description = '', image, url } = Astro.props
+const {
+  title = 'Trusted Crypto',
+  description = '',
+} = Astro.props
 ---
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {url && <link rel="canonical" href={url} />}
-
-    <!-- Perf: Sanity CDN preconnect -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
-
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    {image && <meta property="og:image" content={image} />}
-    {url && <meta property="og:url" content={url} />}
-    <meta name="twitter:card" content="summary_large_image" />
   </head>
+
   <body class="bg-[#0b0f14] text-white antialiased">
-    <GlobalGlow />
-    <Nav />
-    <main id="content" class="max-w-[1160px] mx-auto p-6">
+    <!-- Header -->
+    <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/5 bg-white/0 border-b border-white/10">
+      <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+<a href="/" class="flex items-center h-24" aria-label="Trusted Crypto — Home">
+  <img src="/logo.svg" alt="Trusted Crypto" class="h-full w-auto" width="75" height="75" />
+</a>
+        <nav class="hidden sm:flex items-center gap-4 text-sm opacity-90">
+          <a href="/best-exchanges/" class="hover:opacity-100">Exchanges</a>
+          <a href="/reviews/" class="hover:opacity-100">Reviews</a>
+          <a href="/news/" class="hover:opacity-100">Guides</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-6">
       <slot />
     </main>
-    <SpeedInsights />
+
+    {SpeedInsights && <SpeedInsights />}
+
   </body>
 </html>
