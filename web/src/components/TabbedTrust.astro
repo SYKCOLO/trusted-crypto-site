@@ -1,0 +1,133 @@
+---
+interface Props {
+  kicker?: string
+  heading?: string
+  images?: (string | null)[] // ['/img/independent.png','/img/testing.png','/img/guides.png'] or nulls for placeholders
+}
+const {
+  kicker = "TESTING & EXPERTISE",
+  heading = "Independent, data-driven, and genuinely helpful",
+  images = [null, null, null],
+} = Astro.props as Props
+
+const tabs = [
+  {
+    title: "Independent & transparent",
+    body:
+      "Our picks are never pay-to-play. We publish our criteria, disclose partnerships, and update recommendations when facts change.",
+    ctaLabel: "Read our promise",
+    ctaHref: "/about/",
+  },
+  {
+    title: "How we test",
+    body:
+      "We sign up, deposit, trade, and withdraw. Then we combine hands-on notes with trusted data to score fees, security, UX, and liquidity.",
+    ctaLabel: "How we test",
+    ctaHref: "/about/how-we-test/",
+  },
+  {
+    title: "Guides, not hype",
+    body:
+      "Short explainers and safety tips to help you avoid gotchas and move confidently. Original research is on our roadmap.",
+    ctaLabel: "See guides",
+    ctaHref: "/news/",
+  },
+]
+---
+<section aria-labelledby="trust-heading" class="mt-10 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-10">
+  <div class="grid md:grid-cols-2 gap-6 items-center">
+    <!-- LEFT: image per tab (pre-sized to avoid CLS) -->
+    <div class="relative rounded-2xl border border-white/10 overflow-hidden" style="aspect-ratio: 4/3">
+      {images.map((src, i) => (
+        src ? (
+          <img data-img={i} src={src} alt="" aria-hidden="true"
+               class="absolute inset-0 w-full h-full object-contain" hidden={i !== 0} loading="lazy" decoding="async" />
+        ) : (
+          <div data-img={i} hidden={i !== 0}
+               class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+        )
+      ))}
+    </div>
+
+    <!-- RIGHT: tabs + panels -->
+    <div data-tabs>
+      <p class="text-xs tracking-wider font-semibold text-[#ff8ca5] uppercase">{kicker}</p>
+      <h2 id="trust-heading" class="mt-2 text-2xl sm:text-3xl font-semibold leading-tight">{heading}</h2>
+
+      <!-- Tablist -->
+      <div role="tablist" aria-label="Trust tabs" class="mt-4 flex flex-wrap gap-2">
+        {tabs.map((t, i) => (
+          <button
+            type="button"
+            role="tab"
+            data-tab={i}
+            aria-controls={`panel-${i}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            class={`px-3 py-2 rounded-xl border text-sm font-semibold focus:outline-none focus:ring-2
+                    ${i === 0
+                      ? 'bg-white text-black border-white'
+                      : 'bg-white/10 text-white border-white/15 hover:bg-white/15'}`}
+          >
+            {t.title}
+          </button>
+        ))}
+      </div>
+
+      <!-- Panels -->
+      <div class="mt-4 min-h-[170px]">
+        {tabs.map((t, i) => (
+          <div role="tabpanel"
+               id={`panel-${i}`}
+               data-panel={i}
+               hidden={i !== 0}>
+            <p class="opacity-80">{t.body}</p>
+            <a href={t.ctaHref} class="inline-block mt-4 px-4 py-2 rounded-xl border border-white/20 hover:bg-white/5">
+              {t.ctaLabel}
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Keep inline so it runs after this section exists -->
+  <script is:inline>
+    (() => {
+      const script = document.currentScript;
+      const section = script && script.closest('section');
+      if (!section) return;
+
+      const root   = section.querySelector('[data-tabs]');
+      const tabs   = Array.from(root.querySelectorAll('[data-tab]'));
+      const panels = Array.from(section.querySelectorAll('[data-panel]'));
+      const imgs   = Array.from(section.querySelectorAll('[data-img]'));
+
+      const set = (n) => {
+        tabs.forEach((b, i) => {
+          const active = i === n;
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+          b.tabIndex = active ? 0 : -1;
+          b.classList.toggle('bg-white', active);
+          b.classList.toggle('text-black', active);
+          b.classList.toggle('border-white', active);
+          b.classList.toggle('bg-white/10', !active);
+          b.classList.toggle('text-white', !active);
+          b.classList.toggle('border-white/15', !active);
+        });
+        panels.forEach((p, i) => p.hidden = i !== n);
+        imgs.forEach((im, i) => im.hidden = i !== n);
+      };
+
+      tabs.forEach((b, i) => {
+        b.addEventListener('click', () => set(i));
+        b.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight') { e.preventDefault(); const j=(i+1)%tabs.length; set(j); tabs[j].focus(); }
+          if (e.key === 'ArrowLeft')  { e.preventDefault(); const j=(i-1+tabs.length)%tabs.length; set(j); tabs[j].focus(); }
+        });
+      });
+
+      set(0);
+    })();
+  </script>
+</section>
