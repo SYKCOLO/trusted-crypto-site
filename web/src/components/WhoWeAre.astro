@@ -1,0 +1,41 @@
+---
+import GlowBG from './GlowBG.astro'
+
+interface Props {
+  kicker?: string
+  heading?: string
+  body?: string
+  ctaHref?: string
+  ctaLabel?: string
+  imgSrc?: string
+}
+const {
+  kicker = "WHAT WE'RE ABOUT",
+  heading = "Cut through the crypto noise",
+  body = "Crypto is mainstream, but the signal is buried in hype. We run hands-on tests, publish transparent scores, and translate the trade-offs into plain English—so you can learn, protect, and invest with confidence.",
+  ctaHref = "/about/",
+  ctaLabel = "See our mission",
+  imgSrc
+} = Astro.props as Props
+---
+<section aria-labelledby="about" class="mt-10 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-10">
+  <GlowBG class="opacity-40" />
+  <div class="grid md:grid-cols-2 gap-6 items-center">
+    <div>
+      <p class="text-xs tracking-wider font-semibold text-[#ff8ca5] uppercase">{kicker}</p>
+      <h2 id="about" class="mt-2 text-2xl sm:text-3xl font-semibold leading-tight">{heading}</h2>
+      <p class="opacity-80 mt-3 max-w-prose">{body}</p>
+      <a href={ctaHref} class="inline-block mt-5 px-4 py-2 rounded-xl border border-white/20 hover:bg-white/5">
+        {ctaLabel}
+      </a>
+    </div>
+    <div class="relative">
+      {imgSrc ? (
+        <img src={imgSrc} alt="" aria-hidden="true" loading="lazy" decoding="async"
+             class="w-full h-auto rounded-2xl border border-white/10 object-contain" style="aspect-ratio: 4/3" />
+      ) : (
+        <div class="aspect-[4/3] rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/0"></div>
+      )}
+    </div>
+  </div>
+</section>

@@ -4,6 +4,9 @@ import groq from 'groq'
 import { sanity } from '../lib/sanity'
 import SanityImage from '../components/SanityImage.astro'
 import GlowBG from '../components/GlowBG.astro'
+import PressBar from '../components/PressBar.astro'
+import WhoWeAre from '../components/WhoWeAre.astro'
+import TabbedTrust from '../components/TabbedTrust.astro'
 
 const [exchanges, posts] = await Promise.all([
   sanity.fetch(groq`
@@ -23,40 +26,20 @@ const title = 'Make smarter crypto decisions with independent reviews & simple g
 const description = 'We test exchanges and tools, explain the trade-offs in plain English, and keep rankings honest.'
 ---
 <Base {title} {description} url="https://trustedcrypto.com/">
-  <!-- HERO with soft blurred glow -->
+  <!-- HERO -->
   <section class="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-10">
     <GlowBG />
     <h1 class="text-3xl sm:text-4xl font-semibold leading-tight max-w-3xl">{title}</h1>
     <p class="opacity-80 mt-3 max-w-2xl">{description}</p>
-
-    <!-- CTA row -->
     <div class="mt-5 flex flex-wrap gap-3">
       <a href="/best-exchanges/" class="px-4 py-2 rounded-xl bg-white text-black hover:opacity-90">See top exchanges</a>
       <a href="/news/" class="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/5">Read latest</a>
     </div>
-
-    <!-- Quick deep-link chips -->
     <div class="mt-4 flex flex-wrap gap-2">
       <a href="/best-exchanges/" class="text-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 hover:bg-white/15">Best overall</a>
       <a href="/best-exchanges/" class="text-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 hover:bg-white/15">Low fees</a>
       <a href="/best-exchanges/" class="text-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 hover:bg-white/15">For beginners</a>
       <a href="/reviews/"        class="text-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 hover:bg-white/15">All reviews</a>
-    </div>
-  </section>
-
-  <!-- VALUE PROPS -->
-  <section class="mt-10 grid sm:grid-cols-3 gap-4">
-    <div class="rounded-2xl p-5 border border-white/10 bg-white/5">
-      <div class="text-lg font-semibold">Independent testing</div>
-      <p class="opacity-80 mt-1 text-sm">Transparent criteria. No pay-to-play. We publish methods and updates.</p>
-    </div>
-    <div class="rounded-2xl p-5 border border-white/10 bg-white/5">
-      <div class="text-lg font-semibold">Plain-English guidance</div>
-      <p class="opacity-80 mt-1 text-sm">Cut the jargon. Understand trade-offs in minutes, not hours.</p>
-    </div>
-    <div class="rounded-2xl p-5 border border-white/10 bg-white/5">
-      <div class="text-lg font-semibold">Built for speed</div>
-      <p class="opacity-80 mt-1 text-sm">Optimized for Core Web Vitals so pages load fast everywhere.</p>
     </div>
   </section>
 
@@ -84,6 +67,24 @@ const description = 'We test exchanges and tools, explain the trade-offs in plai
     </div>
   </section>
 
+  <!-- WHO WE ARE -->
+  <WhoWeAre
+    kicker="WHAT WE'RE ABOUT"
+    heading="Cut through the crypto noise"
+    body="Crypto is mainstream, but the signal is buried in hype. We run hands-on tests, publish transparent scores, and translate the trade-offs into plain English—so you can learn, protect, and invest with confidence."
+    ctaHref="/about/"
+    ctaLabel="See our mission"
+    /* imgSrc="/who-we-are.png" */
+  />
+
+  <!-- TESTING & EXPERTISE (Tabbed) -->
+  <TabbedTrust
+  kicker="TESTING & EXPERTISE"
+  heading="Independent, data-driven, and genuinely helpful"
+  images={['/img/independent.png','/img/testing.png','/img/guides.png']}
+/>
+
+
   <!-- LATEST POSTS -->
   <section class="mt-10">
     <div class="flex items-baseline justify-between">
@@ -107,13 +108,8 @@ const description = 'We test exchanges and tools, explain the trade-offs in plai
     </div>
   </section>
 
-  <!-- TRUST BAR (placeholder logos/text) -->
-  <section class="mt-10 rounded-2xl p-6 border border-white/10 bg-white/5">
-    <p class="opacity-70 text-sm">As featured by</p>
-    <div class="flex flex-wrap gap-x-6 gap-y-3 mt-3 opacity-80">
-      <span>BBC</span><span>CNN</span><span>Reuters</span><span>Bloomberg</span><span>WSJ</span><span>Time</span>
-    </div>
-  </section>
+  <!-- PRESS BAR -->
+  <PressBar />
 
   <!-- FOOTER CTA -->
   <section class="mt-10 rounded-2xl p-6 border border-white/10 bg-white/5">
