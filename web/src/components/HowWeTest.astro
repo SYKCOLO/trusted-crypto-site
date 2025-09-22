@@ -1,0 +1,20 @@
+---
+const bullets = [
+  { title: 'Independent testing', text: 'We buy accounts, run the same tasks, and publish our criteria.' },
+  { title: 'Transparent scoring', text: 'Fees, security, UX, and proof-of-reserves—weighted and explained.' },
+  { title: 'Kept up to date', text: 'Recommendations change when facts change. We log every update.' },
+]
+---
+<section aria-labelledby="how-we-test" class="mt-10 grid sm:grid-cols-3 gap-4">
+  {bullets.map((b) => (
+    <div class="rounded-2xl p-5 border border-white/10 bg-white/5">
+      <div class="text-lg font-semibold">{b.title}</div>
+      <p class="opacity-80 mt-1 text-sm">{b.text}</p>
+    </div>
+  ))}
+  <div class="sm:col-span-3">
+    <a href="/about/how-we-test/" class="inline-block mt-3 px-4 py-2 rounded-xl border border-white/20 hover:bg-white/5">
+      See our full methodology
+    </a>
+  </div>
+</section>
