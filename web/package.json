@@ -18,5 +18,8 @@
     "astro": "^5.13.9",
     "groq": "^4.9.0",
     "tailwindcss": "^4.1.13"
+  },
+  "devDependencies": {
+    "svgo": "^4.0.0"
   }
 }

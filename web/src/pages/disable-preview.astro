@@ -1,0 +1,7 @@
+---
+export const prerender = false;
+export async function GET({ cookies, redirect }) {
+  cookies.delete('tc-preview', { path: '/' })
+  return redirect('/')
+}
+---
