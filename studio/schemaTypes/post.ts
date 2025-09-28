@@ -1,6 +1,6 @@
 import {defineField, defineType} from 'sanity'
 
-export default defineType({
+const post = defineType({
   name: 'post',
   title: 'Post',
   type: 'document',
@@ -9,16 +9,47 @@ export default defineType({
       name: 'title',
       title: 'Title',
       type: 'string',
+      validation: r => r.required()
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      options: {
-        source: 'title',
-        maxLength: 96,
-      },
+      options: { source: 'title', maxLength: 96 },
+      validation: r => r.required()
     }),
+
+    // NEW: short summary for listings/SEO
+    defineField({
+      name: 'excerpt',
+      title: 'Excerpt',
+      type: 'text',
+      rows: 3
+    }),
+
+    // NEW: beginner/intermediate/advanced
+    defineField({
+      name: 'difficulty',
+      title: 'Difficulty',
+      type: 'string',
+      initialValue: 'beginner',
+      options: {
+        list: [
+          {title: 'Beginner', value: 'beginner'},
+          {title: 'Intermediate', value: 'intermediate'},
+          {title: 'Advanced', value: 'advanced'},
+        ]
+      }
+    }),
+
+    // NEW: read time in minutes
+    defineField({
+      name: 'duration',
+      title: 'Read time (min)',
+      type: 'number',
+      validation: r => r.min(1).max(60)
+    }),
+
     defineField({
       name: 'author',
       title: 'Author',
@@ -29,9 +60,7 @@ export default defineType({
       name: 'mainImage',
       title: 'Main image',
       type: 'image',
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
     }),
     defineField({
       name: 'categories',
@@ -56,10 +85,19 @@ export default defineType({
       title: 'title',
       author: 'author.name',
       media: 'mainImage',
+      difficulty: 'difficulty',
+      duration: 'duration',
     },
     prepare(selection) {
-      const {author} = selection
-      return {...selection, subtitle: author && `by ${author}`}
+      const {author, difficulty, duration} = selection
+      const bits = [
+        difficulty,
+        duration ? `${duration} min` : null,
+        author ? `by ${author}` : null
+      ].filter(Boolean)
+      return {...selection, subtitle: bits.join(' • ')}
     },
   },
 })
+
+export default post
