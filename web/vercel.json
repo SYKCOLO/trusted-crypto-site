@@ -1,6 +1,8 @@
 {
   "redirects": [
-    { "source": "/news/:slug", "destination": "/guides/:slug", "permanent": true }
+    { "source": "/news/:slug", "destination": "/guides/:slug", "permanent": true },
+    { "source": "/news", "destination": "/guides", "permanent": true },
+    { "source": "/news/", "destination": "/guides", "permanent": true }
   ],
   "headers": [
     {
