@@ -1,0 +1,133 @@
+---
+interface TocItem { id: string; text: string; level: 'h2' | 'h3' }
+const { items = [] } = Astro.props as { items: TocItem[] }
+---
+{items.length > 0 && (
+  <nav class="toc" aria-label="On this page">
+    <!-- Mobile: collapsible -->
+    <details class="lg:hidden rounded-xl border border-white/10 bg-white/5 p-3">
+      <summary class="cursor-pointer font-semibold text-[#b07aff]">
+        On this page
+      </summary>
+      <ul class="mt-2 space-y-1">
+        {items.map((i) => (
+          <li class={i.level === 'h3' ? 'pl-3' : ''}>
+            <a href={`#${i.id}`} class="toc-link">{i.text}</a>
+          </li>
+        ))}
+      </ul>
+    </details>
+
+    <!-- Desktop: scrollable list (aside is sticky in the page) -->
+    <div class="hidden lg:block">
+      <div class="text-sm font-semibold mb-2 text-[#b07aff]">On this page</div>
+      <div class="toc-scroll">
+        <ul class="space-y-1">
+          {items.map((i) => (
+            <li class={i.level === 'h3' ? 'pl-3' : ''}>
+              <a href={`#${i.id}`} class="toc-link" data-toc-link={i.id}>
+                {i.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </nav>
+)}
+
+<script is:inline>
+  (() => {
+    const root = document.currentScript?.closest('.toc');
+    if (!root) return;
+
+    const scrollBox = root.querySelector('.toc-scroll');
+
+    // All TOC links + target headings
+    const links = Array.from(root.querySelectorAll('[data-toc-link]'));
+    if (!links.length) return;
+
+    const ids = links
+      .map((a) => a.getAttribute('data-toc-link') || '')
+      .filter(Boolean);
+    const heads = ids
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    const activate = (id) => {
+      links.forEach((a) =>
+        a.classList.toggle('active', a.getAttribute('data-toc-link') === id)
+      );
+      const activeLink = root.querySelector(
+        `[data-toc-link="${CSS.escape(id)}"]`
+      );
+      if (activeLink && scrollBox) {
+        activeLink.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
+    };
+
+    // Observe headings to update active link on scroll
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible?.target?.id) activate(visible.target.id);
+      },
+      {
+        rootMargin: '-20% 0% -70% 0%',
+        threshold: [0, 1],
+      }
+    );
+
+    heads.forEach((h) => io.observe(h));
+
+    // Click: activate immediately + close mobile panel
+    root.addEventListener(
+      'click',
+      (e) => {
+        const a = e.target && e.target.closest
+          ? e.target.closest('a[data-toc-link]')
+          : null;
+        if (!a) return;
+        const id = a.getAttribute('data-toc-link');
+        if (!id) return;
+        activate(id);
+        const d = root.querySelector('details');
+        if (d && d.open) d.open = false;
+      },
+      true
+    );
+
+    // Initial state: activate first item if available
+    if (ids[0]) activate(ids[0]);
+  })();
+</script>
+
+<style>
+  /* Container matches 260px rail column */
+  .toc { max-width: 260px; }
+  .toc .toc-scroll {
+    max-height: calc(100vh - 6rem);
+    overflow: auto;
+    padding-right: .25rem;
+  }
+
+  /* Links (purple accent) */
+  .toc .toc-link {
+    color: inherit;
+    opacity: .85;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .toc .toc-link:hover {
+    color: #b07aff;
+    opacity: 1;
+    text-decoration: underline;
+  }
+  .toc .toc-link.active {
+    color: #b07aff;
+    opacity: 1;
+    font-weight: 600;
+  }
+</style>

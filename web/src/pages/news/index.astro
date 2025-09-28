@@ -15,7 +15,7 @@ const posts = await sanity.fetch(groq`
   <ul class="space-y-2">
     {posts.map((p: any) => (
       <li>
-        <a class="underline" href={`/news/${p.slug}/`}>{p.title}</a>
+        <a class="underline" href={`/guides/${p.slug}/`}>{p.title}</a>
         <span class="opacity-70"> — {new Date(p.publishedAt).toLocaleDateString()}</span>
       </li>
     ))}

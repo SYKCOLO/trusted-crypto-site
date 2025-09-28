@@ -19,25 +19,30 @@ const {
   </head>
 
   <body class="bg-[#0b0f14] text-white antialiased">
+    <!-- Sitewide background glow -->
+    <GlobalGlow />
+
     <!-- Header -->
     <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/5 bg-white/0 border-b border-white/10">
-      <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-<a href="/" class="flex items-center h-24" aria-label="Trusted Crypto — Home">
-  <img src="/logo.svg" alt="Trusted Crypto" class="h-full w-auto" width="75" height="75" />
-</a>
+      <div class="max-w-[1200px] mx-auto px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center h-24" aria-label="Trusted Crypto — Home">
+          <img src="/logo.svg" alt="Trusted Crypto" class="h-full w-auto" width="75" height="75" />
+        </a>
         <nav class="hidden sm:flex items-center gap-4 text-sm opacity-90">
           <a href="/best-exchanges/" class="hover:opacity-100">Exchanges</a>
           <a href="/reviews/" class="hover:opacity-100">Reviews</a>
-          <a href="/news/" class="hover:opacity-100">Guides</a>
+          <a href="/guides/" class="hover:opacity-100">Guides</a>
         </nav>
       </div>
     </header>
 
-    <main class="max-w-5xl mx-auto p-6">
+    <!-- Site-wide comfy reading size -->
+    <main class="max-w-[1200px] mx-auto p-6
+                 text-[17px] md:text-[18px]
+                 leading-7 md:leading-8">
       <slot />
     </main>
 
     {SpeedInsights && <SpeedInsights />}
-
   </body>
 </html>

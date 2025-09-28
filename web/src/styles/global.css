@@ -1,1 +1,56 @@
 @import "tailwindcss";
+/* Prose (dark) */
+.prose { color: #e6e6e6; line-height: 1.75; }
+.prose h1,.prose h2,.prose h3,.prose h4 { line-height: 1.25; margin: 1.25rem 0 .5rem; font-weight: 600; }
+.prose h1 { font-size: clamp(1.85rem, 1.2rem + 2vw, 2.4rem); }
+.prose h2 { font-size: clamp(1.4rem, 1rem + 1.2vw, 1.8rem); }
+.prose h3 { font-size: 1.125rem; }
+.prose p { margin: .75rem 0; opacity: .95; }
+.prose ul,.prose ol { margin: .75rem 0; padding-left: 1.25rem; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose a { text-decoration: underline; }
+
+/* Heading anchors */
+.prose .anchor { opacity: 0; margin-right: .35rem; text-decoration: none; display: inline-block; }
+.prose h1:hover .anchor, .prose h2:hover .anchor, .prose h3:hover .anchor, .prose h4:hover .anchor { opacity: .4; }
+.prose .anchor:hover { opacity: .9; }
+
+/* Callout */
+.prose .callout { border: 1px solid rgba(255,255,255,.12); border-radius: .75rem; padding: .75rem 1rem; background: rgba(255,255,255,.04); margin: 1rem 0; }
+.prose .callout[data-tone="tip"] { border-color: rgba(16,185,129,.25); background: rgba(16,185,129,.08); }
+.prose .callout[data-tone="warning"] { border-color: rgba(244,63,94,.25); background: rgba(244,63,94,.08); }
+.prose .callout-title { display:block; margin-bottom:.25rem; }
+
+/* Steps */
+.prose .steps { counter-reset: step; margin: 1rem 0; padding-left: 0; }
+.prose .steps .step-item { list-style: none; margin: .75rem 0; border: 1px solid rgba(255,255,255,.1); border-radius: .75rem; padding: .75rem 1rem; background: rgba(255,255,255,.04); position: relative; }
+.prose .steps .step-item::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute; left: -10px; top: -10px;
+  width: 28px; height: 28px; border-radius: 14px;
+  background: white; color: black; font-weight: 700; display: grid; place-items: center;
+  border: 1px solid rgba(0,0,0,.1);
+}
+
+/* Pros & Cons */
+.prose .proscons { display: grid; gap: .75rem; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .prose .proscons { grid-template-columns: 1fr 1fr; } }
+.prose .proscons > div { border: 1px solid rgba(255,255,255,.12); border-radius: .75rem; padding: .75rem 1rem; background: rgba(255,255,255,.04); }
+
+/* FAQ */
+.prose .faq-block { margin: 1.25rem 0; }
+.prose details.faq { border: 1px solid rgba(255,255,255,.12); border-radius: .75rem; padding: .75rem 1rem; background: rgba(255,255,255,.04); }
+.prose details.faq + details.faq { margin-top: .5rem; }
+.prose details.faq > summary { cursor: pointer; font-weight: 600; list-style: none; }
+.prose details.faq > summary::-webkit-details-marker { display: none; }
+.prose details.faq > div { margin-top: .5rem; opacity: .9; }
+
+/* Smooth hash-link scrolling */
+html { scroll-behavior: smooth; }
+
+/* Make anchored headings land below your sticky site header */
+.prose h1[id], .prose h2[id], .prose h3[id], .prose h4[id] {
+  scroll-margin-top: 90px; /* adjust to your header height */
+}

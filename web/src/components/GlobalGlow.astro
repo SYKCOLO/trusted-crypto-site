@@ -1,16 +1,62 @@
 ---
 const { class: className = '' } = Astro.props
 ---
-<div aria-hidden="true" class={`pointer-events-none fixed inset-0 -z-10 ${className}`}>
-  <!-- Top-left warm -->
-  <div class="absolute top-[2vh] left-[-8vw] h-[28rem] w-[28rem] rounded-full blur-3xl opacity-25"
-       style="background: radial-gradient(50% 50% at 50% 50%, #ff8ca5 0%, rgba(255,140,165,0) 70%);"></div>
-
-  <!-- Mid-right cool -->
-  <div class="absolute top-[35vh] right-[-10vw] h-[32rem] w-[32rem] rounded-full blur-3xl opacity-25"
-       style="background: radial-gradient(50% 50% at 50% 50%, #7aa2ff 0%, rgba(122,162,255,0) 70%);"></div>
-
-  <!-- Low-left purple -->
-  <div class="absolute bottom-[-6vh] left-[-6vw] h-[30rem] w-[30rem] rounded-full blur-3xl opacity-20"
-       style="background: radial-gradient(50% 50% at 50% 50%, #b07aff 0%, rgba(176,122,255,0) 70%);"></div>
+<div aria-hidden="true" class={`pointer-events-none fixed inset-0 -z-10 ${className}`} data-global-glow>
+  <!-- We’ll randomize these three orbs on load -->
+  <div data-orb="warm"   class="orb"></div>
+  <div data-orb="cool"   class="orb"></div>
+  <div data-orb="purple" class="orb"></div>
 </div>
+
+<style>
+  [data-global-glow] .orb{
+    position:absolute;
+    border-radius:9999px;
+    /* big soft blur (roughly Tailwind blur-3xl) */
+    filter: blur(48px);
+    opacity: var(--o, 0.25);
+    height: var(--s, 28rem);
+    width:  var(--s, 28rem);
+    background: radial-gradient(50% 50% at 50% 50%, var(--c, #fff) 0%, transparent 70%);
+  }
+</style>
+
+<script is:inline>
+(() => {
+  const root = document.querySelector('[data-global-glow]');
+  if (!root) return;
+
+  const rand = (min, max) => Math.random() * (max - min) + min;
+
+  const place = (el, pos) => {
+    el.style.top = el.style.right = el.style.bottom = el.style.left = 'auto';
+    for (const k in pos) el.style[k] = pos[k];
+  };
+
+  const warm   = root.querySelector('[data-orb="warm"]');
+  const cool   = root.querySelector('[data-orb="cool"]');
+  const purple = root.querySelector('[data-orb="purple"]');
+
+  if (warm){
+    warm.style.setProperty('--c', '#ff8ca5');
+    warm.style.setProperty('--s', `${rand(24,32)}rem`);
+    warm.style.setProperty('--o', '0.25');
+    // anywhere in upper-left/upper-mid
+    place(warm, { top: `${rand(-10,25)}vh`, left: `${rand(-12,40)}vw` });
+  }
+  if (cool){
+    cool.style.setProperty('--c', '#7aa2ff');
+    cool.style.setProperty('--s', `${rand(26,34)}rem`);
+    cool.style.setProperty('--o', '0.25');
+    // mid-right band
+    place(cool, { top: `${rand(25,60)}vh`, right: `${rand(-10,20)}vw` });
+  }
+  if (purple){
+    purple.style.setProperty('--c', '#b07aff');
+    purple.style.setProperty('--s', `${rand(24,32)}rem`);
+    purple.style.setProperty('--o', '0.20');
+    // lower-left band
+    place(purple, { bottom: `${rand(-12,10)}vh`, left: `${rand(-10,35)}vw` });
+  }
+})();
+</script>

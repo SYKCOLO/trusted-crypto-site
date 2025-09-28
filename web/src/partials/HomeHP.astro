@@ -33,7 +33,7 @@ const description = 'We test exchanges and tools, explain the trade-offs in plai
     <p class="opacity-80 mt-3 max-w-2xl">{description}</p>
     <div class="mt-5 flex flex-wrap gap-3">
       <a href="/best-exchanges/" class="px-4 py-2 rounded-xl bg-white text-black hover:opacity-90">See top exchanges</a>
-      <a href="/news/" class="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/5">Read latest</a>
+      <a href="/guides/" class="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/5">Read latest</a>
     </div>
     <div class="mt-4 flex flex-wrap gap-2">
       <a href="/best-exchanges/" class="text-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 hover:bg-white/15">Best overall</a>
@@ -74,14 +74,14 @@ const description = 'We test exchanges and tools, explain the trade-offs in plai
     body="Crypto is mainstream, but the signal is buried in hype. We run hands-on tests, publish transparent scores, and translate the trade-offs into plain English—so you can learn, protect, and invest with confidence."
     ctaHref="/about/"
     ctaLabel="See our mission"
-    /* imgSrc="/who-we-are.png" */
+    /* imgSrc="/who-we-are.webp" */
   />
 
   <!-- TESTING & EXPERTISE (Tabbed) -->
   <TabbedTrust
   kicker="TESTING & EXPERTISE"
   heading="Independent, data-driven, and genuinely helpful"
-  images={['/img/independent.png','/img/testing.png','/img/guides.png']}
+  images={['/img/independent.webp','/img/testing.webp','/img/guides.webp']}
 />
 
 
@@ -89,11 +89,11 @@ const description = 'We test exchanges and tools, explain the trade-offs in plai
   <section class="mt-10">
     <div class="flex items-baseline justify-between">
       <h2 class="text-2xl font-semibold">Latest guides & news</h2>
-      <a class="text-sm underline opacity-80 hover:opacity-100" href="/news/">View all</a>
+      <a class="text-sm underline opacity-80 hover:opacity-100" href="/guides/">View all</a>
     </div>
     <div class="grid sm:grid-cols-2 gap-4 mt-3">
       {posts.map((p:any) => (
-        <a href={`/news/${p.slug}/`} class="rounded-2xl p-4 border border-white/5 bg-[#12161b] block">
+        <a href={`/guides/${p.slug}/`} class="rounded-2xl p-4 border border-white/5 bg-[#12161b] block">
           {p.coverImage && (
             <SanityImage asset={p.coverImage} alt={p.title}
               widths={[480,640,800]} sizes="(max-width: 768px) 100vw, 480px"

@@ -1,0 +1,14 @@
+---
+import { renderPortable } from '../lib/portable'
+const { value } = Astro.props
+const html = renderPortable(value ?? [])
+---
+<!-- One wrapper only -->
+<div
+  class="prose prose-invert max-w-none
+         text-[17px] md:text-[18px]    /* fallback body size bump */
+         leading-7 md:leading-8        /* ~28px → ~32px line-height */
+         prose-headings:leading-tight prose-headings:font-semibold"
+>
+  <div set:html={html} />
+</div>
