@@ -24,3 +24,6 @@ pnpm-debug.log*
 .idea/
 src/pages/index.backup-*.astro
 .vercel
+
+# dev backups
+src/pages/index.backup-*.astro
