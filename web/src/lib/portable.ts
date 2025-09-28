@@ -98,6 +98,13 @@ export function renderPortable(value: any[] = []) {
 
       faqItem: ({ value }) =>
         `<details class="faq"><summary>${value?.q || ''}</summary><div>${renderPortable(value?.a || [])}</div></details>`,
+
+      // NEW: Spacer block
+      spacer: ({ value }) => {
+        const size = value?.size ?? 'm'       // xs | s | m | l | xl
+        const dividerAttr = value?.divider ? ' data-divider="1"' : ''
+        return `<div class="rt-spacer" data-size="${size}"${dividerAttr} aria-hidden="true"></div>`
+      },
     },
   }
 

@@ -1,8 +1,13 @@
 ---
 const { class: className = '' } = Astro.props
 ---
-<div aria-hidden="true" class={`pointer-events-none fixed inset-0 -z-10 ${className}`} data-global-glow>
-  <!-- We’ll randomize these three orbs on load -->
+<!-- Global background glow: force *way* behind everything -->
+<div
+  aria-hidden="true"
+  data-global-glow
+  class={`pointer-events-none fixed inset-0 ${className}`}
+  style="z-index:-9999"
+>
   <div data-orb="warm"   class="orb"></div>
   <div data-orb="cool"   class="orb"></div>
   <div data-orb="purple" class="orb"></div>
@@ -10,14 +15,13 @@ const { class: className = '' } = Astro.props
 
 <style>
   [data-global-glow] .orb{
-    position:absolute;
-    border-radius:9999px;
-    /* big soft blur (roughly Tailwind blur-3xl) */
+    position: absolute;
+    border-radius: 9999px;
     filter: blur(48px);
-    opacity: var(--o, 0.25);
+    opacity: var(--o, .25);
     height: var(--s, 28rem);
     width:  var(--s, 28rem);
-    background: radial-gradient(50% 50% at 50% 50%, var(--c, #fff) 0%, transparent 70%);
+    background: radial-gradient(50% 50% at 50% 50%, var(--c, #ffffff) 0%, transparent 70%);
   }
 </style>
 
@@ -27,7 +31,6 @@ const { class: className = '' } = Astro.props
   if (!root) return;
 
   const rand = (min, max) => Math.random() * (max - min) + min;
-
   const place = (el, pos) => {
     el.style.top = el.style.right = el.style.bottom = el.style.left = 'auto';
     for (const k in pos) el.style[k] = pos[k];
@@ -41,21 +44,18 @@ const { class: className = '' } = Astro.props
     warm.style.setProperty('--c', '#ff8ca5');
     warm.style.setProperty('--s', `${rand(24,32)}rem`);
     warm.style.setProperty('--o', '0.25');
-    // anywhere in upper-left/upper-mid
     place(warm, { top: `${rand(-10,25)}vh`, left: `${rand(-12,40)}vw` });
   }
   if (cool){
     cool.style.setProperty('--c', '#7aa2ff');
     cool.style.setProperty('--s', `${rand(26,34)}rem`);
     cool.style.setProperty('--o', '0.25');
-    // mid-right band
     place(cool, { top: `${rand(25,60)}vh`, right: `${rand(-10,20)}vw` });
   }
   if (purple){
     purple.style.setProperty('--c', '#b07aff');
     purple.style.setProperty('--s', `${rand(24,32)}rem`);
     purple.style.setProperty('--o', '0.20');
-    // lower-left band
     place(purple, { bottom: `${rand(-12,10)}vh`, left: `${rand(-10,35)}vw` });
   }
 })();

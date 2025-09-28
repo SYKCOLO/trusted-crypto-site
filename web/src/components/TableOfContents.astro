@@ -1,36 +1,35 @@
 ---
-interface TocItem { id: string; text: string; level: 'h2' | 'h3' }
+// src/components/TableOfContents.astro
+interface TocItem { id: string; text: string; level: 'h2'|'h3' }
 const { items = [] } = Astro.props as { items: TocItem[] }
 ---
 {items.length > 0 && (
   <nav class="toc" aria-label="On this page">
-    <!-- Mobile: collapsible -->
-    <details class="lg:hidden rounded-xl border border-white/10 bg-white/5 p-3">
-      <summary class="cursor-pointer font-semibold text-[#b07aff]">
-        On this page
-      </summary>
-      <ul class="mt-2 space-y-1">
-        {items.map((i) => (
-          <li class={i.level === 'h3' ? 'pl-3' : ''}>
-            <a href={`#${i.id}`} class="toc-link">{i.text}</a>
+    {/* Mobile */}
+    <details class="lg:hidden surface-soft rounded-xl p-3">
+      <summary class="cursor-pointer font-semibold">On this page</summary>
+      <ul class="mt-2 space-y-1 text-[13px] leading-5">
+        {items.map(i => (
+          <li class={`toc-item ${i.level === 'h3' ? 'pl-3' : ''}`}>
+            <a href={`#${i.id}`} class="toc-link" data-toc-link={i.id}>{i.text}</a>
           </li>
         ))}
       </ul>
     </details>
 
-    <!-- Desktop: scrollable list (aside is sticky in the page) -->
-    <div class="hidden lg:block">
-      <div class="text-sm font-semibold mb-2 text-[#b07aff]">On this page</div>
-      <div class="toc-scroll">
-        <ul class="space-y-1">
-          {items.map((i) => (
-            <li class={i.level === 'h3' ? 'pl-3' : ''}>
-              <a href={`#${i.id}`} class="toc-link" data-toc-link={i.id}>
-                {i.text}
-              </a>
-            </li>
-          ))}
-        </ul>
+    {/* Desktop */}
+    <div class="hidden lg:block sticky top-20">
+      <div class="surface-soft rounded-2xl p-4">
+        <div class="text-sm font-semibold mb-2" style="color: rgba(255,255,255,.75)">On this page</div>
+        <div class="toc-scroll">
+          <ul class="space-y-1 text-sm leading-5">
+            {items.map(i => (
+              <li class={`toc-item ${i.level === 'h3' ? 'pl-3' : ''}`}>
+                <a href={`#${i.id}`} class="toc-link" data-toc-link={i.id}>{i.text}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   </nav>
@@ -42,91 +41,94 @@ const { items = [] } = Astro.props as { items: TocItem[] }
     if (!root) return;
 
     const scrollBox = root.querySelector('.toc-scroll');
-
-    // All TOC links + target headings
-    const links = Array.from(root.querySelectorAll('[data-toc-link]'));
+    const links = Array.from(root.querySelectorAll('a[data-toc-link]'));
     if (!links.length) return;
 
-    const ids = links
-      .map((a) => a.getAttribute('data-toc-link') || '')
-      .filter(Boolean);
+    const ids = links.map(a => a.getAttribute('data-toc-link')!);
     const heads = ids
-      .map((id) => document.getElementById(id))
+      .map(id => document.getElementById(id))
       .filter(Boolean);
 
-    const activate = (id) => {
-      links.forEach((a) =>
-        a.classList.toggle('active', a.getAttribute('data-toc-link') === id)
-      );
-      const activeLink = root.querySelector(
-        `[data-toc-link="${CSS.escape(id)}"]`
-      );
-      if (activeLink && scrollBox) {
-        activeLink.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    // Offset so we account for sticky header + some breathing room
+    const OFFSET = 120;
+
+    let positions = [];
+    function measure() {
+      positions = heads.map(h => ({
+        id: h.id,
+        top: Math.floor(h.getBoundingClientRect().top + window.scrollY)
+      })).sort((a,b) => a.top - b.top);
+    }
+    function activate(id) {
+      links.forEach(a => {
+        const is = a.getAttribute('data-toc-link') === id;
+        a.classList.toggle('active', is);
+        a.setAttribute('aria-current', is ? 'true' : 'false');
+        const li = a.closest('.toc-item');
+        if (li) li.classList.toggle('active', is);
+      });
+      const activeLink = root.querySelector(`[data-toc-link="${id}"]`);
+      if (activeLink && scrollBox) activeLink.scrollIntoView({ block: 'nearest' });
+    }
+    function onScroll() {
+      const y = window.scrollY + OFFSET;
+      let current = positions[0]?.id;
+      for (const p of positions) {
+        if (p.top <= y) current = p.id;
+        else break;
       }
-    };
+      if (current) activate(current);
+    }
 
-    // Observe headings to update active link on scroll
-    const io = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (visible?.target?.id) activate(visible.target.id);
-      },
-      {
-        rootMargin: '-20% 0% -70% 0%',
-        threshold: [0, 1],
-      }
-    );
+    // Init
+    measure();
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => { measure(); onScroll(); });
 
-    heads.forEach((h) => io.observe(h));
-
-    // Click: activate immediately + close mobile panel
-    root.addEventListener(
-      'click',
-      (e) => {
-        const a = e.target && e.target.closest
-          ? e.target.closest('a[data-toc-link]')
-          : null;
-        if (!a) return;
-        const id = a.getAttribute('data-toc-link');
-        if (!id) return;
-        activate(id);
-        const d = root.querySelector('details');
-        if (d && d.open) d.open = false;
-      },
-      true
-    );
-
-    // Initial state: activate first item if available
-    if (ids[0]) activate(ids[0]);
+    // Click = immediate active + close mobile panel
+    root.addEventListener('click', (e) => {
+      const a = (e.target as HTMLElement).closest('a[data-toc-link]');
+      if (!a) return;
+      activate(a.getAttribute('data-toc-link')!);
+      const d = root.querySelector('details');
+      if (d && (d as HTMLDetailsElement).open) (d as HTMLDetailsElement).open = false;
+    }, true);
   })();
 </script>
 
 <style>
-  /* Container matches 260px rail column */
-  .toc { max-width: 260px; }
   .toc .toc-scroll {
-    max-height: calc(100vh - 6rem);
+    max-height: calc(100vh - 10rem);
     overflow: auto;
     padding-right: .25rem;
   }
 
-  /* Links (purple accent) */
+  .toc .toc-item { position: relative; }
+  .toc .toc-item.active::before {
+    content: '';
+    position: absolute;
+    left: -8px; top: 0; bottom: 0;
+    width: 2px;
+    background: #b07aff;
+    border-radius: 2px;
+    opacity: .9;
+  }
+
   .toc .toc-link {
-    color: inherit;
-    opacity: .85;
+    display: block;
     text-decoration: none;
-    display: inline-block;
+    color: rgba(255,255,255,.85);
+    transition: color .15s ease, opacity .15s ease;
+    padding: .25rem .25rem .25rem 0;
   }
   .toc .toc-link:hover {
-    color: #b07aff;
+    color: #b07aff;     /* hover color restored */
     opacity: 1;
     text-decoration: underline;
   }
   .toc .toc-link.active {
-    color: #b07aff;
+    color: #b07aff;     /* active text color */
     opacity: 1;
     font-weight: 600;
   }

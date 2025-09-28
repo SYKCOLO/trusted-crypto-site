@@ -41,6 +41,7 @@ export default defineType({
 
     // NEW: Top10VPN-style platform tabs (Windows/macOS/etc.)
     defineArrayMember({ type: 'platformSteps' }),
+    defineArrayMember({type: 'spacer'}),
 
     // NEW: FAQ block (list of faqItem)
     defineArrayMember({

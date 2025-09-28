@@ -1,8 +1,7 @@
 ---
+// src/layouts/Base.astro
 import SpeedInsights from '@vercel/speed-insights/astro'
 import '../styles/global.css'
-import Nav from '../components/Nav.astro'
-import GlobalGlow from '../components/GlobalGlow.astro'
 
 const {
   title = 'Trusted Crypto',
@@ -16,14 +15,37 @@ const {
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+
+    <!-- Per-page head injections (OG tags, JSON-LD, etc.) -->
+    <slot name="head" />
+
+    <!-- Randomize global glow (uses CSS vars defined in global.css) -->
+    <script is:inline>
+      (() => {
+        const r = document.documentElement;
+        const rand = (min, max) => Math.random() * (max - min) + min;
+
+        // upper-left / upper-mid
+        r.style.setProperty('--orb1-x', `${rand(0, 35)}%`);
+        r.style.setProperty('--orb1-y', `${rand(0, 25)}%`);
+        r.style.setProperty('--orb1-s', `${rand(35, 50)}vmax`);
+
+        // mid-right
+        r.style.setProperty('--orb2-x', `${rand(60, 100)}%`);
+        r.style.setProperty('--orb2-y', `${rand(30, 65)}%`);
+        r.style.setProperty('--orb2-s', `${rand(35, 50)}vmax`);
+
+        // lower-left band
+        r.style.setProperty('--orb3-x', `${rand(0, 40)}%`);
+        r.style.setProperty('--orb3-y', `${rand(75, 110)}%`);
+        r.style.setProperty('--orb3-s', `${rand(35, 50)}vmax`);
+      })();
+    </script>
   </head>
 
   <body class="bg-[#0b0f14] text-white antialiased">
-    <!-- Sitewide background glow -->
-    <GlobalGlow />
-
     <!-- Header -->
-    <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/5 bg-white/0 border-b border-white/10">
+    <header class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/5 bg-white/0 border-b border-white/10">
       <div class="max-w-[1200px] mx-auto px-6 h-14 flex items-center justify-between">
         <a href="/" class="flex items-center h-24" aria-label="Trusted Crypto — Home">
           <img src="/logo.svg" alt="Trusted Crypto" class="h-full w-auto" width="75" height="75" />
@@ -37,9 +59,7 @@ const {
     </header>
 
     <!-- Site-wide comfy reading size -->
-    <main class="max-w-[1200px] mx-auto p-6
-                 text-[17px] md:text-[18px]
-                 leading-7 md:leading-8">
+    <main class="relative max-w-[1200px] mx-auto p-6 text-[17px] md:text-[18px] leading-7 md:leading-8">
       <slot />
     </main>
 

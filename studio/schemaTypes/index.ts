@@ -11,6 +11,7 @@ import prosCons from './prosCons'
 import faqItem from './faqItem'
 import platformVariant from './platformVariant'
 import platformSteps from './platformSteps'
+import spacer from './spacer'
 
 export const schemaTypes = [
   author,
@@ -27,4 +28,5 @@ export const schemaTypes = [
   faqItem,
   platformVariant,
   platformSteps,
+  spacer,
 ]

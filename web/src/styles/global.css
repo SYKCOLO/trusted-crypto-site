@@ -1,4 +1,66 @@
 @import "tailwindcss";
+
+
+/* Reusable semi-opaque panel: keeps a subtle frost, tames glow bleed */
+.surface-soft {
+  background-color: rgba(10, 14, 20, 0.48); /* darker, 88% opacity */
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 1rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(px);
+  transition: background-color .15s ease, opacity .15s ease;
+}
+.surface-soft:hover { background-color: rgba(10, 14, 20, 0.92); }
+
+
+
+
+
+/* === Global background glow orbs (behind everything) ===================== */
+/* Defaults; will be overridden by the inline script in Base.astro */
+/* === Full-bleed background glow (no tile edges) ========================= */
+:root{
+  /* positions (percents within viewport) */
+  --orb1-x: 18%; --orb1-y: 12%; --orb1-r: 42%;
+  --orb2-x: 84%; --orb2-y: 46%; --orb2-r: 45%;
+  --orb3-x: 22%; --orb3-y: 92%; --orb3-r: 40%;
+
+  /* colors as rgb triplets for easy alpha control */
+  --orb1-color: 255,140,165; /* #ff8ca5 */
+  --orb2-color: 122,162,255; /* #7aa2ff */
+  --orb3-color: 176,122,255; /* #b07aff */
+}
+
+body{
+  background-color: #0b0f14; /* base */
+  background-repeat: no-repeat;
+
+  /* Three large radial gradients that fade smoothly */
+  background-image:
+    radial-gradient(circle at var(--orb1-x) var(--orb1-y),
+      rgba(var(--orb1-color), 0.14) 0%,
+      rgba(var(--orb1-color), 0.06) calc(var(--orb1-r) * 0.7),
+      rgba(var(--orb1-color), 0) var(--orb1-r)
+    ),
+    radial-gradient(circle at var(--orb2-x) var(--orb2-y),
+      rgba(var(--orb2-color), 0.13) 0%,
+      rgba(var(--orb2-color), 0) var(--orb2-r)
+    ),
+    radial-gradient(circle at var(--orb3-x) var(--orb3-y),
+      rgba(var(--orb3-color), 0.10) 0%,
+      rgba(var(--orb3-color), 0) var(--orb3-r)
+    );
+
+  /* Subtle parallax on desktop; switch to scroll if you see jank */
+  background-attachment: scroll;
+}
+
+@media (min-width: 1024px){
+  body { background-attachment: fixed, fixed, fixed; }
+}
+
+
+/* ======================================================================== */
 /* Prose (dark) */
 .prose { color: #e6e6e6; line-height: 1.75; }
 .prose h1,.prose h2,.prose h3,.prose h4 { line-height: 1.25; margin: 1.25rem 0 .5rem; font-weight: 600; }
@@ -11,10 +73,16 @@
 .prose ol { list-style: decimal; }
 .prose a { text-decoration: underline; }
 
-/* Heading anchors */
-.prose .anchor { opacity: 0; margin-right: .35rem; text-decoration: none; display: inline-block; }
-.prose h1:hover .anchor, .prose h2:hover .anchor, .prose h3:hover .anchor, .prose h4:hover .anchor { opacity: .4; }
-.prose .anchor:hover { opacity: .9; }
+/* Heading anchors: keep IDs for TOC/scroll, hide the visible '#' */
+.prose .anchor {
+  display: none !important;
+}
+
+/* Keep nice jump target below sticky header */
+.prose h1[id], .prose h2[id], .prose h3[id], .prose h4[id]{
+  scroll-margin-top: 90px;
+}
+
 
 /* Callout */
 .prose .callout { border: 1px solid rgba(255,255,255,.12); border-radius: .75rem; padding: .75rem 1rem; background: rgba(255,255,255,.04); margin: 1rem 0; }
@@ -54,3 +122,29 @@ html { scroll-behavior: smooth; }
 .prose h1[id], .prose h2[id], .prose h3[id], .prose h4[id] {
   scroll-margin-top: 90px; /* adjust to your header height */
 }
+
+/* ====== Portable Text spacers ====== */
+.prose .rt-spacer { height: var(--h); margin: 0; }
+.prose .rt-spacer[data-size="xs"] { --h: .5rem; }
+.prose .rt-spacer[data-size="s"]  { --h: 1rem; }
+.prose .rt-spacer[data-size="m"]  { --h: 1.5rem; }
+.prose .rt-spacer[data-size="l"]  { --h: 2.25rem; }
+.prose .rt-spacer[data-size="xl"] { --h: 3rem; }
+
+.prose .rt-spacer[data-divider] {
+  position: relative;
+  height: calc(var(--h) + 1rem);
+}
+.prose .rt-spacer[data-divider]::before{
+  content:"";
+  display:block;
+  height:1px;
+  margin: .75rem 0;
+  background: linear-gradient(90deg, rgba(255,140,165,.65), rgba(176,122,255,.55));
+  border-radius: 1px;
+}
+
+/* ====== Gentle breathing room after big custom blocks ====== */
+/* Ensures next section heading doesn’t smash into it even if no spacer is used */
+.prose :is(.steps, .proscons, .faq-block, details.faq) { margin: 1.25rem 0; }
+.prose :is(.steps, .proscons, .faq-block, details.faq) + :is(h2, h3) { margin-top: 2rem; }
